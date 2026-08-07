@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EA Tools",
-  description: "Internal tools portal for Eatable Adventures & Accelera Ventures",
+  title: "Tools Portal",
+  description: "Internal tools portal for Eatable Adventures",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -1,14 +1,14 @@
 # EA Tools — internal portal
 
-Internal portal for the Eatable Adventures & Accelera Ventures teams, hosted at
+Internal portal for the Eatable Adventures team, hosted at
 **tools.eatableadventures.com**. It lists internal apps and provides the shared
 authentication layer for everything under the domain.
 
 ## How auth works
 
 - Google sign-in via [Auth.js](https://authjs.dev) (NextAuth v5).
-- Only verified `@eatableadventures.com` and `@acceleraventures.vc` accounts
-  are allowed (see `ALLOWED_EMAIL_DOMAINS` in `auth.ts`).
+- Only verified `@eatableadventures.com` accounts are allowed (see
+  `ALLOWED_EMAIL_DOMAINS` in `auth.ts`).
 - Sessions are JWTs signed with `AUTH_SECRET`. In production the session
   cookie is set on `.eatableadventures.com` (via `AUTH_COOKIE_DOMAIN`), so
   apps deployed on subdomains can verify the same cookie with the same

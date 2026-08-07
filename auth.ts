@@ -1,10 +1,7 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 
-export const ALLOWED_EMAIL_DOMAINS = [
-  "eatableadventures.com",
-  "acceleraventures.vc",
-];
+export const ALLOWED_EMAIL_DOMAINS = ["eatableadventures.com"];
 
 // Set AUTH_COOKIE_DOMAIN=.eatableadventures.com in production so apps on
 // subdomains (e.g. app.eatableadventures.com) share the session cookie.
