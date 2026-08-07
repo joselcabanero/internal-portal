@@ -8,6 +8,10 @@ const zones = [
     path: "/ontology",
     origin: "https://eatable-ontology-showcase.vercel.app",
   },
+  {
+    path: "/business-model-comparator",
+    origin: "https://business-model-comparator.vercel.app",
+  },
 ];
 
 const nextConfig: NextConfig = {
