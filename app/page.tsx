@@ -66,6 +66,14 @@ const categories: PortalCategory[] = [
         tag: "Finance",
         external: true,
       },
+      {
+        name: "Business Model Comparator",
+        description:
+          "Compare and simulate 15 startup revenue models side by side, with monthly projections rolled up to annual results.",
+        href: "https://business-model-comparator.vercel.app/",
+        tag: "Finance",
+        external: true,
+      },
     ],
   },
 ];
