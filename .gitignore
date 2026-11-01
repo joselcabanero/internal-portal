@@ -26,3 +26,4 @@ out/
 .idea/
 .vercel
 .env*
+*.tsbuildinfo
