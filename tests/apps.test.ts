@@ -21,11 +21,12 @@ describe("parseUpstreamUrl", () => {
 });
 
 describe("resolvePlatformApps", () => {
-  it("lists the five platform apps with unique ids, paths and env vars", () => {
+  it("lists the six platform apps with unique ids, paths and env vars", () => {
     expect(PLATFORM_APPS.map((a) => a.basePath)).toEqual([
       "/jarvis",
       "/scout",
       "/navigator",
+      "/ontology-studio",
       "/programs",
       "/revenue",
     ]);

@@ -106,10 +106,14 @@ function AccountFooter({ user }: { user: ShellUser | null }) {
 export function PortalShell({
   apps,
   user,
+  brandName = "Tools Portal",
+  brandSub = "Eatable Adventures",
   children,
 }: {
   apps: PortalApp[];
   user: ShellUser | null;
+  brandName?: string;
+  brandSub?: string;
   children: ReactNode;
 }) {
   const pathname = usePathname();
@@ -123,7 +127,7 @@ export function PortalShell({
     <AppearanceProvider app={PORTAL_APP} defaultPalette={PORTAL_PALETTE}>
       <AppShell
         app={PORTAL_APP}
-        brand={{ mark: "EA", name: "Tools Portal", sub: "Eatable Adventures" }}
+        brand={{ mark: "EA", name: brandName, sub: brandSub }}
         nav={nav}
         activeId={activeId}
         linkAs={Link}

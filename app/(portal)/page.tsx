@@ -4,8 +4,7 @@ import { Grid, PageHeader, Panel } from "@/components/ads/layout";
 import { Badge } from "@/components/ads/kit/card";
 import type { PortalApp } from "@/components/ads/portal";
 import { PortalAppIcon } from "@/components/portal-app-icon";
-import { resolvePlatformApps } from "@/lib/apps";
-import { categories } from "@/lib/links";
+import { editionCategories, editionCopy, editionPlatformApps } from "@/lib/edition";
 import { cardAnchor, platformPortalApps, toolPortalApps } from "@/lib/portal-apps";
 
 /** One launcher card: a Panel on the page grid. The title is the link and
@@ -69,18 +68,20 @@ function Section({ title, blurb, children }: { title: string; blurb: string; chi
 export default async function Home() {
   const session = await auth();
   const user = session?.user;
-  const platform = platformPortalApps(resolvePlatformApps());
+  const platform = platformPortalApps(editionPlatformApps());
+  const copy = editionCopy();
+  const categories = editionCategories();
 
   return (
     <>
       <PageHeader
         eyebrow="Eatable Adventures"
         title={`Welcome${user?.name ? `, ${user.name.split(" ")[0]}` : ""}`}
-        lede="Your home for the Eatable Adventures toolkit — research, data and planning apps, all in one place and just for the team. Every new tool lands here first."
+        lede={copy.lede}
       />
 
       <div className="flex flex-col gap-10">
-      <Section title="Platform" blurb="Jarvis 2 apps on the shared ecosystem platform.">
+      <Section title={copy.platformTitle} blurb={copy.platformBlurb}>
         {platform.map((app) => (
           <AppCard key={app.id} app={app} />
         ))}
