@@ -20,8 +20,12 @@ authentication layer for everything under the domain.
 
 ## Portal shell and platform apps
 
-The portal is the shell for the Jarvis 2 apps: a shared sidebar (shadcn/ui)
-and a launcher on the home page.
+The portal is the shell for the Jarvis 2 apps, built on Eatable's design
+system **app-design-system** (installed from the `@ads` shadcn registry into
+`components/ads/` and `styles/ads/`; rules in `CLAUDE.md`): `<AppShell>` with
+one sidebar line per app, the app switcher, ⌘K search, the phone tab bar and
+the palette switcher (default Tangerine), plus a launcher on the home page
+(`Grid`/`Panel`). `tests/design-lint.test.ts` keeps the design rules green.
 
 - **App registry:** `lib/apps.ts` lists the platform apps: Jarvis 2
   (`/jarvis`), Scout (`/scout`), Data Navigator (`/navigator`), OI Programs
@@ -56,6 +60,15 @@ Zones call this (same origin, so the browser sends the portal cookie) to get a
     `__Secure-authjs.session-token`)
 - Rotating: set the API's `AUTH_SECRET` to `new,old`, then change the portal's
   `PLATFORM_TOKEN_SECRET`, then drop `old` from the API.
+- `GET /api/portal-apps` returns the app list in the design system's portal
+  contract, `{ apps: [{ id, label, href, icon, description, group, badge?,
+  zone?, external? }] }`, for the switcher of every app inside the portal
+  (`<AppShell portal={{ home: '/', appsEndpoint: '/api/portal-apps', currentAppId }}>`).
+  Live platform apps: zone path + `zone: true`; coming soon: `badge: "Soon"`
+  and `href: "/#app-<id>"` (their card on the portal home); tools: `external:
+  true` or `zone: true`. Built in `lib/portal-apps.ts`, the same list the
+  portal's own sidebar uses. 401 JSON when signed out (except with `SKIP_AUTH`
+  in dev).
 - `GET /api/platform/apps` returns the registry (ids, names, paths, status)
   for a zone's own switcher. Both routes check the session themselves and
   answer JSON 401 rather than redirecting to `/login`.

@@ -1,0 +1,152 @@
+/*
+ * @ads/tokens — import once, after `@import "tailwindcss";`
+ *
+ * Layout: Josef Müller-Brockmann's modular grid. The unit is the LINE INTERVAL (14px type on a
+ * 20px line). Gutters are one line; field and chart heights are whole lines; the 4px sub-grid is
+ * for small adjustments only. Text is flush left, ragged right.
+ *
+ * Colour: diagram-design ink on warm paper, one FOCAL hue per palette (colors.css is generated
+ * from palettes.ts). Tailwind's default colour palette is switched off on purpose: only tokens exist.
+ */
+@import "./colors.css";
+
+:root {
+  --line: 20px;
+  --gutter: 20px;
+  --page: 1280px;
+  --font-sans-stack: var(--font-geist-sans, "Geist"), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono-stack: var(--font-geist-mono, "Geist Mono"), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* shadcn-compatible aliases, so stock shadcn components work unchanged.
+     NB: shadcn's `accent` and `muted` are SURFACES (hover backgrounds), not our focal colour. */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--panel);
+  --card-foreground: var(--ink);
+  --popover: var(--panel);
+  --popover-foreground: var(--ink);
+  --secondary: var(--hover);
+  --secondary-foreground: var(--ink);
+  --muted-foreground: var(--muted);
+  --accent: var(--hover);
+  --accent-foreground: var(--ink);
+  --destructive: var(--bad);
+  --border: var(--rule);
+  --input: var(--rule-solid);
+}
+@media (max-width: 639px) {
+  :root { --gutter: 12px; }
+}
+
+@theme {
+  /* Only tokens: remove Tailwind's default colour palette (bg-amber-100 and friends cannot be used). */
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+
+  --font-sans: var(--font-sans-stack);
+  --font-mono: var(--font-mono-stack);
+
+  /* Type scale — six sizes, two weights. Line heights sit on the 20px line or its halves. */
+  --text-eyebrow: 11px;
+  --text-eyebrow--line-height: 20px;
+  --text-eyebrow--letter-spacing: 0.16em;
+  --text-caption: 11px;
+  --text-caption--line-height: 16px;
+  --text-label: 13px;
+  --text-label--line-height: 20px;
+  --text-body: 14px;
+  --text-body--line-height: 20px;
+  --text-heading: 18px;
+  --text-heading--line-height: 24px;
+  --text-heading--letter-spacing: -0.02em;
+  --text-figure: 32px;
+  --text-figure--line-height: 40px;
+  --text-figure--letter-spacing: -0.04em;
+  --text-title: 40px;
+  --text-title--line-height: 44px;
+  --text-title--letter-spacing: -0.035em;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  --breakpoint-sm: 640px;
+  --breakpoint-lg: 1024px;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-soft: var(--soft);
+  --color-rule: var(--rule);
+  --color-rule-solid: var(--rule-solid);
+  --color-hover: var(--hover);
+
+  --color-focal: var(--focal);
+  --color-focal-ink: var(--focal-ink);
+  --color-focal-tint: var(--focal-tint);
+
+  --color-series-1: var(--series-1);
+  --color-series-2: var(--series-2);
+  --color-series-3: var(--series-3);
+  --color-series-4: var(--series-4);
+  --color-series-5: var(--series-5);
+
+  --color-ok: var(--ok);
+  --color-ok-subtle: var(--ok-subtle);
+  --color-warn: var(--warn);
+  --color-warn-subtle: var(--warn-subtle);
+  --color-bad: var(--bad);
+  --color-bad-subtle: var(--bad-subtle);
+  --color-info: var(--info);
+  --color-info-subtle: var(--info-subtle);
+
+  /* shadcn names */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--hover); /* shadcn: a surface */
+  --color-muted-foreground: var(--muted-foreground); /* secondary text */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --spacing-line: var(--line);
+  --spacing-gutter: var(--gutter);
+  --container-page: var(--page);
+}
+
+@layer base {
+  *, *::before, *::after { border-color: var(--rule); }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans-stack);
+    font-size: 14px;
+    line-height: var(--line);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3 { text-wrap: balance; }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: var(--radius-sm); }
+  ::selection { background: var(--focal-tint); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+}

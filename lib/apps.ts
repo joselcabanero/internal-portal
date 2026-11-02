@@ -15,12 +15,13 @@
  * routes manifest), so changing one on Vercel means redeploying.
  *
  * This file must stay free of React and icon imports: next.config.ts imports it.
- * Icons are referenced by name and resolved in `components/app-icon.tsx`.
+ * Icons are referenced by name; `lib/portal-apps.ts` maps them to the design
+ * system's portal icon names.
  */
 
 export type AppStatus = "live" | "coming-soon";
 
-/** Icon names understood by components/app-icon.tsx. */
+/** Icon names, mapped to design-system icons in lib/portal-apps.ts. */
 export type AppIconName =
   | "layout-dashboard"
   | "telescope"

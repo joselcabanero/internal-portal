@@ -1,5 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AppearanceScript } from "@/components/ads/appearance";
+import { PORTAL_APP, PORTAL_PALETTE } from "@/components/portal-shell-config";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,13 +19,24 @@ export const metadata: Metadata = {
   description: "Internal tools portal for Eatable Adventures",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        {/* Applies the stored palette and mode before the first paint. */}
+        <AppearanceScript app={PORTAL_APP} defaultPalette={PORTAL_PALETTE} />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }
