@@ -9,6 +9,8 @@ import { allZones, zoneRewrites } from "./lib/zones";
 // lib/apps.ts. Platform apps are routed only when their ZONE_<ID>_URL env var
 // is set; it is read at BUILD time, so changing it on Vercel means redeploying.
 const nextConfig: NextConfig = {
+  // Local preview runs at 127.0.0.1 (another program owns localhost here).
+  allowedDevOrigins: ["127.0.0.1"],
   async rewrites() {
     return zoneRewrites(allZones(process.env));
   },
