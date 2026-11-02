@@ -1,25 +1,18 @@
 import type { NextConfig } from "next";
+import { allZones, zoneRewrites } from "./lib/zones";
 
 // Apps without their own subdomain are served under a portal path (multi-zone).
 // Each zone app must set `basePath` to its portal path in its own next.config,
 // so its assets and links are prefixed and the proxy below can forward them.
-const zones = [
-  {
-    path: "/ontology",
-    origin: "https://eatable-ontology-showcase.vercel.app",
-  },
-  {
-    path: "/business-model-comparator",
-    origin: "https://business-model-comparator.vercel.app",
-  },
-];
-
+//
+// The fixed zones and the platform app registry live in lib/zones.ts and
+// lib/apps.ts. Platform apps are routed only when their ZONE_<ID>_URL env var
+// is set; it is read at BUILD time, so changing it on Vercel means redeploying.
 const nextConfig: NextConfig = {
+  // Local preview runs at 127.0.0.1 (another program owns localhost here).
+  allowedDevOrigins: ["127.0.0.1"],
   async rewrites() {
-    return zones.flatMap(({ path, origin }) => [
-      { source: path, destination: `${origin}${path}` },
-      { source: `${path}/:path*`, destination: `${origin}${path}/:path*` },
-    ]);
+    return zoneRewrites(allZones(process.env));
   },
 };
 

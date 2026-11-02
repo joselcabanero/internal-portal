@@ -1,45 +1,7 @@
 @import "tailwindcss";
+@import "../styles/ads/tokens.css";
+@import "../styles/ads/ui.css";
+@import "../styles/ads/charts.css";
 
-/* Terracotta design system — warm clay palette shared by all portal pages. */
-:root {
-  --background: #faf5f0;
-  --surface: #ffffff;
-  --ink: #33231c;
-  --muted: #8a7060;
-  --terracotta: #c05b33;
-  --terracotta-strong: #9f4726;
-  --terracotta-soft: #f4e2d7;
-  --line: #e9dccf;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-surface: var(--surface);
-  --color-ink: var(--ink);
-  --color-muted: var(--muted);
-  --color-terracotta: var(--terracotta);
-  --color-terracotta-strong: var(--terracotta-strong);
-  --color-terracotta-soft: var(--terracotta-soft);
-  --color-line: var(--line);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #211712;
-    --surface: #2b1e17;
-    --ink: #f5ebe3;
-    --muted: #b59a8a;
-    --terracotta: #d97f53;
-    --terracotta-strong: #e29268;
-    --terracotta-soft: #3d2517;
-    --line: #433025;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--ink);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-}
+/* Everything else comes from the design system (app-design-system): tokens,
+   palettes (default Tangerine, switchable in the sidebar), light/dark mode. */

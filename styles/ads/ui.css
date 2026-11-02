@@ -1,0 +1,26 @@
+/* @ads/ui — the few styles utilities cannot express. */
+.ads-swatch { background: oklch(calc(var(--curve-l) - var(--l, 0) * var(--curve-dir)) var(--c) var(--h)); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .35s; }
+
+/* Diagram (diagram-design node treatments) */
+.ads-dn { stroke-width: 1; }
+.ads-dn-standard { fill: var(--panel); stroke: var(--ink); }
+.ads-dn-focal { fill: var(--focal-tint); stroke: var(--focal); stroke-width: 1.2; }
+.ads-dn-external { fill: var(--hover); stroke: var(--soft); }
+.ads-dn-store { fill: var(--hover); stroke: var(--muted); }
+.ads-dn-optional { fill: none; stroke: var(--soft); stroke-dasharray: 4 3; }
+.ads-dn-t { font: 600 12px var(--font-sans-stack); fill: var(--ink); }
+.ads-dn-t-focal { fill: var(--focal-ink); }
+.ads-dn-s { font: 9px var(--font-mono-stack); letter-spacing: .06em; fill: var(--muted); }
+.ads-ar { fill: none; stroke: var(--ink); stroke-width: 1; }
+.ads-ar-d { stroke: var(--soft); stroke-dasharray: 4 4; }
+.ads-dgm-head { fill: var(--ink); }
+.ads-ar-l { font: 9px var(--font-mono-stack); letter-spacing: .06em; fill: var(--muted); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
+
+/* Print: drop navigation and chrome, keep content full width on paper. Mark extra chrome with .ads-noprint. */
+@media print {
+  .ads-noprint { display: none !important; }
+  body { background: #fff; }
+  main > div { max-width: none !important; padding: 0 !important; }
+  section { break-inside: avoid; }
+}
