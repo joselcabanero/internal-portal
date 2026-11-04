@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { editionCategories, editionCopy, editionPlatformApps, portalEdition } from "../lib/edition";
+import { editionCategories, editionCopy, editionHasWorkspace, editionPlatformApps, portalEdition } from "../lib/edition";
 import { categories } from "../lib/links";
 import { allZones, STATIC_ZONES } from "../lib/zones";
 
@@ -35,5 +35,13 @@ describe("portal edition", () => {
     const apps = editionPlatformApps(env);
     expect(apps.find((a) => a.id === "ontology-studio")?.status).toBe("coming-soon");
     expect(allZones(env).map((z) => z.path)).toEqual(["/jarvis"]);
+  });
+
+  it("shows the workspace selector only in the ecosystem edition", () => {
+    expect(editionHasWorkspace({})).toBe(false);
+    expect(editionHasWorkspace({ PORTAL_EDITION: "tools" })).toBe(false);
+    expect(editionHasWorkspace({ PORTAL_EDITION: "anything" })).toBe(false);
+    expect(editionHasWorkspace({ PORTAL_EDITION: "ecosystem" })).toBe(true);
+    expect(editionHasWorkspace({ PORTAL_EDITION: " Ecosystem " })).toBe(true);
   });
 });

@@ -37,6 +37,14 @@ export function editionCategories(env: Env = process.env): PortalCategory[] {
   return portalEdition(env) === "ecosystem" ? [] : toolCategories;
 }
 
+/**
+ * Whether this edition shows the workspace selector (pick or blend markets for the whole session).
+ * Only the ecosystem portal: the tools portal is unchanged.
+ */
+export function editionHasWorkspace(env: Env = process.env): boolean {
+  return portalEdition(env) === "ecosystem";
+}
+
 export interface EditionCopy {
   name: string;
   sub: string;

@@ -1,15 +1,27 @@
 import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { Suspense } from "react";
 import { auth } from "@/auth";
 import { Grid, PageHeader, Panel } from "@/components/ads/layout";
 import { Badge } from "@/components/ads/kit/card";
 import type { PortalApp } from "@/components/ads/portal";
 import { PortalAppIcon } from "@/components/portal-app-icon";
-import { editionCategories, editionCopy, editionPlatformApps } from "@/lib/edition";
+import { editionCategories, editionCopy, editionHasWorkspace, editionPlatformApps } from "@/lib/edition";
+import { activeWorkspaceSummary } from "@/lib/platform-server";
 import { cardAnchor, platformPortalApps, toolPortalApps } from "@/lib/portal-apps";
+import { homeCardFigure } from "@/lib/workspace-figures";
+
+/** Ecosystem edition: the active workspace's combined totals for this app, quietly, at the foot of its
+ *  card. Streams in after the page; when the Platform API cannot answer it renders nothing. */
+async function WorkspaceFigure({ appId }: { appId: string }) {
+  const active = await activeWorkspaceSummary();
+  const text = active ? homeCardFigure(appId, active.summary, active.label) : null;
+  if (!text) return null;
+  return <p className="m-0 mt-auto font-mono text-caption tabular-nums text-muted-foreground">{text}</p>;
+}
 
 /** One launcher card: a Panel on the page grid. The title is the link and
  *  stretches over the whole card; a "Soon" app has no link. */
-function AppCard({ app, tag }: { app: PortalApp; tag?: string }) {
+function AppCard({ app, tag, workspace = false }: { app: PortalApp; tag?: string; workspace?: boolean }) {
   const soon = app.badge != null;
   const Trail = app.external ? ArrowUpRight : ArrowRight;
   return (
@@ -49,6 +61,11 @@ function AppCard({ app, tag }: { app: PortalApp; tag?: string }) {
         )}
       </h3>
       <p className="m-0 text-label text-muted-foreground">{app.description}</p>
+      {workspace && !soon && (
+        <Suspense fallback={null}>
+          <WorkspaceFigure appId={app.id} />
+        </Suspense>
+      )}
     </Panel>
   );
 }
@@ -71,6 +88,7 @@ export default async function Home() {
   const platform = platformPortalApps(editionPlatformApps());
   const copy = editionCopy();
   const categories = editionCategories();
+  const workspaceFigures = editionHasWorkspace();
 
   return (
     <>
@@ -83,7 +101,7 @@ export default async function Home() {
       <div className="flex flex-col gap-10">
       <Section title={copy.platformTitle} blurb={copy.platformBlurb}>
         {platform.map((app) => (
-          <AppCard key={app.id} app={app} />
+          <AppCard key={app.id} app={app} workspace={workspaceFigures} />
         ))}
       </Section>
 

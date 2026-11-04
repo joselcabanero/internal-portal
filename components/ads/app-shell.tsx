@@ -100,6 +100,9 @@ export interface AppShellProps {
   /** Extra controls at the bottom of the sidebar and the More sheet (account, sign out…).
    *  Wrap text in `shellLabel` so it hides on the rail. */
   footer?: ReactNode
+  // local addition: workspace slot — upstream to app-design-system
+  /** Content under the brand block (e.g. a workspace selector); also at the top of the phone's More sheet. */
+  workspace?: ReactNode
   children: ReactNode
 }
 
@@ -111,7 +114,7 @@ const hideWhenCollapsed = 'hidden lg:inline lg:group-data-[collapsed=true]/shell
 const sectionCls = 'block px-2.5 pb-1.5 font-mono text-[10px] uppercase tracking-[.16em] text-muted-foreground'
 const badgeCls = 'ml-auto rounded-full bg-focal-tint px-1.5 font-mono text-[10px] font-medium text-focal-ink'
 
-export function AppShell({ app, brand, nav, activeId, linkAs: Link = A, portal, switcher, search, footer, children }: AppShellProps) {
+export function AppShell({ app, brand, nav, activeId, linkAs: Link = A, portal, switcher, search, footer, workspace, children }: AppShellProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
   const [cmdOpen, setCmdOpen] = useState(false)
@@ -151,6 +154,8 @@ export function AppShell({ app, brand, nav, activeId, linkAs: Link = A, portal, 
         <div className="pb-3">
           <Brand brand={brand} items={switchItems} Link={Link} labels={labels} />
         </div>
+        {/* local addition: workspace slot — upstream to app-design-system */}
+        {workspace && <div className="pb-3">{workspace}</div>}
         {searchOn && (
           <button type="button" onClick={openSearch} aria-label={labels.search} aria-keyshortcuts="Meta+K Control+K" title={`${labels.search} (${shortcut})`}
             className="mb-2 flex min-h-10 items-center justify-center gap-2.5 rounded-md border border-rule-solid bg-panel px-2.5 text-label text-muted-foreground hover:text-ink lg:justify-start lg:group-data-[collapsed=true]/shell:justify-center">
@@ -216,6 +221,8 @@ export function AppShell({ app, brand, nav, activeId, linkAs: Link = A, portal, 
               className="fixed inset-x-0 bottom-0 z-40 rounded-t-xl border border-b-0 border-rule-solid bg-panel pb-[max(20px,env(safe-area-inset-bottom))] pl-[max(16px,env(safe-area-inset-left))] pr-[max(16px,env(safe-area-inset-right))] pt-5">
               <Dialog.Title className="mb-2 font-mono text-eyebrow uppercase text-muted-foreground">{labels.more}</Dialog.Title>
               <div className="flex max-h-[70dvh] flex-col gap-0.5 overflow-y-auto">
+                {/* local addition: workspace slot — upstream to app-design-system */}
+                {workspace && <div className="ads-workspace-sheet pb-2">{workspace}</div>}
                 <NavTree items={rest} activeId={activeId} Link={Link} onNavigate={() => setMoreOpen(false)} forceLabel />
                 {footer && <div className="flex flex-col gap-0.5 border-t border-rule pt-2 [&_.hidden]:inline">{footer}</div>}
                 <AppearanceButton side="top" />
