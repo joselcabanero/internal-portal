@@ -35,8 +35,9 @@ export type WorkspaceMarket = {
   id: string;
   name: string;
   description: string | null;
-  /** A Lucide icon name, e.g. "sprout" (see MARKET_ICON_NAMES). */
+  /** A Lucide icon name in PascalCase, e.g. "Sprout" (see MARKET_ICON_NAMES); null: the default icon. */
   icon: string | null;
+  /** "active" (curated data) or "planned" (ready for data, not yet curated). */
   status: string;
   sortOrder: number;
   counts: MarketCounts;
@@ -55,7 +56,7 @@ export type WorkspacePreset = {
   marketIds: string[];
   /** Shared with the whole team (made by an admin). */
   shared: boolean;
-  /** The uid of the person who made it; null for built-in team presets. */
+  /** The uid of the person who made it; null for team presets (shared presets have no owner). */
   owner: string | null;
 };
 
@@ -81,21 +82,34 @@ export type WorkspaceActions = {
 
 /** The platform's markets, so the trigger can name the workspace before the catalogue has loaded. */
 export const KNOWN_MARKETS: { id: string; name: string; icon: string }[] = [
-  { id: "agriculture_agtech", name: "Agriculture & AgTech", icon: "sprout" },
-  { id: "food_production", name: "Food Production", icon: "wheat" },
-  { id: "health_biotech", name: "Health & BioTech", icon: "heart-pulse" },
-  { id: "finance_fintech", name: "Finance & FinTech", icon: "landmark" },
-  { id: "energy_climate", name: "Energy & Climate", icon: "zap" },
-  { id: "industrial_manufacturing", name: "Industrial & Manufacturing", icon: "factory" },
-  { id: "enterprise_cyber", name: "Enterprise & Cyber", icon: "shield-check" },
+  { id: "agriculture_agtech", name: "Agriculture & AgTech", icon: "Sprout" },
+  { id: "food_production", name: "Food Production & Processing", icon: "UtensilsCrossed" },
+  { id: "health_biotech", name: "Health & BioTech", icon: "Dna" },
+  { id: "finance_fintech", name: "Finance & FinTech", icon: "Landmark" },
+  { id: "energy_climate", name: "Energy, Climate & CleanTech", icon: "Zap" },
+  { id: "industrial_manufacturing", name: "Industrial & Manufacturing", icon: "Factory" },
+  { id: "enterprise_cyber", name: "Enterprise & Cyber Infrastructure", icon: "ServerCog" },
 ];
 
-/** The icons a market can have (Lucide names). Ontology Studio offers these when a market's icon is changed. */
+/**
+ * The icons a market can have: Lucide names in PascalCase, as the platform stores them (`ontology.market.icon`
+ * must match ^[A-Z][A-Za-z0-9]*$). Ontology Studio offers these when a market's icon is changed.
+ */
 export const MARKET_ICON_NAMES = [
-  "sprout", "wheat", "leaf", "tractor", "utensils", "apple", "fish", "heart-pulse", "flask-conical", "pill", "dna",
-  "landmark", "wallet", "coins", "zap", "sun", "wind", "recycle", "factory", "cog", "truck", "shield-check", "server",
-  "cpu", "building-2", "globe", "layers",
+  "Sprout", "Wheat", "Leaf", "Tractor", "UtensilsCrossed", "Utensils", "Apple", "Fish", "HeartPulse", "FlaskConical", "Pill",
+  "Dna", "Landmark", "Wallet", "Coins", "Zap", "Sun", "Wind", "Recycle", "Factory", "Cog", "Truck", "ShieldCheck",
+  "Server", "ServerCog", "Cpu", "Building2", "Globe", "Layers",
 ] as const;
+
+/** An icon name in the platform's form (PascalCase): "heart-pulse" → "HeartPulse", "building_2" → "Building2". */
+export function pascalIconName(name: string): string {
+  return name.trim().split(/[-_\s]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join("");
+}
+
+/** A planned market: ready for data, not yet curated. */
+export function isPlanned(m: Pick<WorkspaceMarket, "status">): boolean {
+  return m.status === "planned";
+}
 
 // ---------- Cookie ----------
 

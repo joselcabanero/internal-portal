@@ -11,8 +11,8 @@
 
 import {
   Apple, Building2, Coins, Cog, Cpu, Dna, Factory, Fish, FlaskConical, Globe, HeartPulse, Landmark, Layers, Leaf, Pill,
-  Recycle, RotateCcw, Search, Server, ShieldCheck, SlidersHorizontal, Sprout, Sun, Tractor, Truck, Utensils, Wallet, Wheat,
-  Wind, X, Zap, type LucideIcon,
+  Recycle, RotateCcw, Search, Server, ServerCog, ShieldCheck, SlidersHorizontal, Sprout, Sun, Tractor, Truck, Utensils,
+  UtensilsCrossed, Wallet, Wheat, Wind, X, Zap, type LucideIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createElement, useEffect, useId, useMemo, useState, useSyncExternalStore, useTransition, type SVGProps } from "react";
@@ -23,23 +23,24 @@ import { Checkbox } from "@/components/ads/kit/controls";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ads/kit/dialog";
 import { Input } from "@/components/ads/kit/input";
 import {
-  approximateSummary, BUILT_IN_PRESETS, compactCount, compactUsd, filterMarkets, hasNoData, KNOWN_MARKETS, knownOnly,
+  approximateSummary, BUILT_IN_PRESETS, compactCount, compactUsd, filterMarkets, hasNoData, isPlanned, KNOWN_MARKETS, knownOnly,
   marketName, matchingPreset, orderPresets, orderSelection, parseWorkspace, presetNameError, readWorkspaceCookie,
   serializeWorkspace, toggleMarket, workspaceCookie, workspaceTrigger,
   type WorkspaceActions, type WorkspaceCatalog, type WorkspaceMarket, type WorkspaceSummary,
 } from "@/lib/workspace";
 
 const ICONS: Record<string, LucideIcon> = {
-  sprout: Sprout, wheat: Wheat, leaf: Leaf, tractor: Tractor, utensils: Utensils, apple: Apple, fish: Fish,
-  "heart-pulse": HeartPulse, "flask-conical": FlaskConical, pill: Pill, dna: Dna, landmark: Landmark, wallet: Wallet,
-  coins: Coins, zap: Zap, sun: Sun, wind: Wind, recycle: Recycle, factory: Factory, cog: Cog, truck: Truck,
-  "shield-check": ShieldCheck, server: Server, cpu: Cpu, "building-2": Building2, globe: Globe, layers: Layers,
+  sprout: Sprout, wheat: Wheat, leaf: Leaf, tractor: Tractor, "utensils-crossed": UtensilsCrossed, utensils: Utensils,
+  apple: Apple, fish: Fish, "heart-pulse": HeartPulse, "flask-conical": FlaskConical, pill: Pill, dna: Dna,
+  landmark: Landmark, wallet: Wallet, coins: Coins, zap: Zap, sun: Sun, wind: Wind, recycle: Recycle, factory: Factory,
+  cog: Cog, truck: Truck, "shield-check": ShieldCheck, server: Server, "server-cog": ServerCog, cpu: Cpu,
+  "building-2": Building2, globe: Globe, layers: Layers,
 };
 
-/** The Lucide icon for a market's icon name ("sprout", "HeartPulse", "heart_pulse"…); Layers when unknown. */
+/** The Lucide icon for a market's icon name ("Sprout", "HeartPulse", "heart-pulse", "Building2"…); Layers when unknown. */
 export function marketIcon(name: string | null | undefined): LucideIcon {
   if (!name) return Layers;
-  const key = name.trim().replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/[_\s]+/g, "-").toLowerCase();
+  const key = name.trim().replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([a-zA-Z])([0-9])/g, "$1-$2").replace(/[_\s]+/g, "-").toLowerCase();
   return ICONS[key] ?? Layers;
 }
 
@@ -108,7 +109,7 @@ export function WorkspaceSelector({ actions, initialSelected = null, canShare = 
   const markets = catalog?.markets ?? [];
   const ids = catalog ? orderSelection(knownOnly(applied, markets), markets) : applied;
   const t = workspaceTrigger(ids, markets);
-  const icon = ids.length === 1 ? iconNameFor(ids[0], markets) : "layers";
+  const icon = ids.length === 1 ? iconNameFor(ids[0], markets) : "Layers";
   const rail = "hidden lg:block lg:group-data-[collapsed=true]/shell:hidden";
 
   return (
@@ -224,7 +225,9 @@ function WorkspaceDialog({ actions, applied, catalog, canShare, onCatalog, onClo
     if (fresh) onCatalog(fresh);
   });
 
-  const mine = (p: { owner: string | null; shared: boolean }) => !!catalog?.uid && p.owner === catalog.uid;
+  // Your own presets, and (for admins) the team's; the built-in fallback preset is not stored, so it cannot go.
+  const mine = (p: { id: string; owner: string | null; shared: boolean }) =>
+    !p.id.startsWith("builtin:") && ((!!catalog?.uid && p.owner === catalog.uid) || (p.shared && canShare));
 
   return (
     <Dialog open onOpenChange={(o) => { if (!o) onClose(); }}>
@@ -369,6 +372,7 @@ function MarketCard({ market: m, checked, onToggle }: { market: WorkspaceMarket;
         <span className="min-w-0 flex-1">
           <span className="flex items-start gap-2">
             <span className={cn("min-w-0 flex-1 font-medium", checked ? "text-focal-ink" : "text-ink")}>{m.name}</span>
+            {isPlanned(m) ? <Badge variant="outline" className="shrink-0">Planned</Badge> : null}
             <MarketIcon icon={m.icon} className={cn("size-[18px] shrink-0", checked ? "text-focal-ink" : "text-soft")} />
           </span>
           {m.description ? <span className="mt-0.5 line-clamp-2 block text-label text-muted-foreground">{m.description}</span> : null}

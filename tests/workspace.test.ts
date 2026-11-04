@@ -2,7 +2,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   approximateSummary, BUILT_IN_PRESETS, compactCount, compactUsd, fetchWithWorkspace, filterMarkets, hasNoData, inWorkspace,
-  isWorkspaceRefusal, knownOnly, marketName, matchingPreset, orderPresets, orderSelection, parseWorkspace, presetNameError,
+  isPlanned, isWorkspaceRefusal, knownOnly, MARKET_ICON_NAMES, pascalIconName, marketName, matchingPreset, orderPresets, orderSelection, parseWorkspace, presetNameError,
   readMarkets, readPreset, readPresets, readSummary, readWorkspaceCookie, sameSelection, serializeWorkspace, toggleMarket,
   withWorkspaceHeader, WORKSPACE_PATHS, workspaceCookie, workspaceLabel, workspaceTrigger, type WorkspaceMarket, type WorkspacePreset,
 } from "@/lib/workspace";
@@ -111,7 +111,7 @@ describe("selection and summary", () => {
 
   it("shortens long blends and falls back to the built-in names", () => {
     expect(workspaceLabel(["a_a", "b_b", "c_c", "d_d"], [], 3)).toBe("A a + B b + 2 more");
-    expect(marketName("energy_climate")).toBe("Energy & Climate");
+    expect(marketName("energy_climate")).toBe("Energy, Climate & CleanTech");
     expect(workspaceLabel([])).toBe("");
   });
 
@@ -202,5 +202,19 @@ describe("reading API answers", () => {
     expect(readPreset({ id: "1" })).toBeNull();
     expect(readPresets({ presets: [{ id: "1", name: "A" }] })).toHaveLength(1);
     expect(readPresets([{ id: "2", name: "B", owner: "u1" }])[0].owner).toBe("u1");
+  });
+});
+
+describe("market icons and status", () => {
+  it("writes icon names the way the platform stores them (PascalCase)", () => {
+    expect(pascalIconName("heart-pulse")).toBe("HeartPulse");
+    expect(pascalIconName("building_2")).toBe("Building2");
+    expect(pascalIconName("Sprout")).toBe("Sprout");
+    expect(MARKET_ICON_NAMES.every((n) => /^[A-Z][A-Za-z0-9]{0,63}$/.test(n))).toBe(true);
+  });
+
+  it("knows planned markets", () => {
+    expect(isPlanned({ status: "planned" })).toBe(true);
+    expect(isPlanned({ status: "active" })).toBe(false);
   });
 });
