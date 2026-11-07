@@ -27,7 +27,8 @@ export type AppIconName =
   | "telescope"
   | "compass"
   | "graduation-cap"
-  | "chart-line";
+  | "chart-line"
+  | "layout-grid";
 
 export interface PlatformAppDefinition {
   id: string;
@@ -73,6 +74,15 @@ export const PLATFORM_APPS: readonly PlatformAppDefinition[] = [
     icon: "compass",
     basePath: "/navigator",
     urlEnv: "ZONE_NAVIGATOR_URL",
+  },
+  {
+    id: "ontology-studio",
+    name: "Ontology Studio",
+    description:
+      "Manage the ontology: taxonomies and their terms, roles and record codes, round stages and relationship types, with review and history.",
+    icon: "layout-grid",
+    basePath: "/ontology-studio",
+    urlEnv: "ZONE_ONTOLOGY_STUDIO_URL",
   },
   {
     id: "programs",

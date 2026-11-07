@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { resolvePlatformApps } from "@/lib/apps";
 import { skipAuth } from "@/lib/dev-auth";
-import { categories } from "@/lib/links";
+import { editionCategories, editionPlatformApps } from "@/lib/edition";
 import { buildPortalApps } from "@/lib/portal-apps";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +18,6 @@ export async function GET() {
       return NextResponse.json({ error: "unauthenticated" }, { status: 401, headers: NO_STORE });
     }
   }
-  const apps = buildPortalApps(resolvePlatformApps(), categories);
+  const apps = buildPortalApps(editionPlatformApps(), editionCategories());
   return NextResponse.json({ apps }, { headers: NO_STORE });
 }

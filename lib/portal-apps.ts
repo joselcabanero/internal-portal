@@ -28,6 +28,7 @@ export const PLATFORM_ICONS: Record<AppIconName, string> = {
   compass: "ChartPie",
   "graduation-cap": "Users",
   "chart-line": "Banknote",
+  "layout-grid": "LayoutGrid",
 };
 
 /** Anchor of an app's card on the portal home. */
