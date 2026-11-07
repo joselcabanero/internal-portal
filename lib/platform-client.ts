@@ -76,6 +76,23 @@ export function createPlatformClient({ baseUrl, token, fetch: fetchImpl = fetch,
       };
     },
 
+    // ---------- Records (⌘K search; scoped to the workspace) ----------
+
+    searchOrganizations: async (q: string, limit = 8): Promise<{ id: string; code: string | null; name: string }[]> => {
+      const b = (await request<{ results?: unknown[] }>(`/search?q=${encodeURIComponent(q)}&limit=${limit}`)) ?? {};
+      return (b.results ?? []).flatMap((r) => {
+        const o = (r ?? {}) as Record<string, unknown>;
+        return typeof o.id === "string" && typeof o.name === "string" ? [{ id: o.id, code: typeof o.code === "string" ? o.code : null, name: o.name }] : [];
+      });
+    },
+
+    /** The record a code names (merged records answer with the survivor); throws ApiError 404 when none. */
+    byCode: async (code: string): Promise<{ id: string; code: string; name: string; kind: string }> => {
+      const b = ((await request<unknown>(`/entities/by-code/${encodeURIComponent(code)}`)) ?? {}) as Record<string, unknown>;
+      const s = (b.survivor ?? b) as Record<string, unknown>;
+      return { id: String(s.id ?? b.id), code: String(s.code ?? b.code ?? code), name: String(s.name ?? b.name ?? code), kind: String(b.kind ?? "organization") };
+    },
+
     // ---------- Workspace (sent without the workspace header) ----------
 
     /** Every market with its counts, whatever the workspace. */

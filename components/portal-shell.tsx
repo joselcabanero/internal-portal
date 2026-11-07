@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { House, LogOut } from "lucide-react";
+import { Building2, GraduationCap, House, LogOut, UserRound } from "lucide-react";
 import type { ReactNode } from "react";
 import { signOutAction } from "@/app/actions";
+import { searchRecords } from "@/app/search-actions";
 import { deleteWorkspacePreset, saveWorkspacePreset, workspaceCatalog, workspaceSummary } from "@/app/workspace-actions";
 import { AppearanceProvider } from "@/components/ads/appearance";
 import {
   AppShell,
   shellLabel,
+  type CommandItem,
   type NavItem,
   type SwitcherItem,
 } from "@/components/ads/app-shell";
@@ -24,6 +26,14 @@ export interface ShellUser {
 }
 
 const HOME_ID = "home";
+
+/** ⌘K live results (ecosystem edition): records by name or code, opening in Jarvis 2 (another zone: a full load). */
+async function searchLive(query: string): Promise<CommandItem[]> {
+  const hits = await searchRecords(query);
+  return hits.map((h) => ({ id: h.id, label: h.label, hint: h.hint, href: h.href, group: "Records", reload: true,
+    icon: h.kind === "person" ? UserRound : h.kind === "program" ? GraduationCap : Building2 }));
+}
+
 const WORKSPACE_ACTIONS: WorkspaceActions = { catalog: workspaceCatalog, summary: workspaceSummary, savePreset: saveWorkspacePreset, deletePreset: deleteWorkspacePreset };
 
 /** The workspace selector's starting point, read from the `eatable_workspace` cookie at request time. */
@@ -146,6 +156,7 @@ export function PortalShell({
         linkAs={Link}
         switcher={portalSwitcher(apps)}
         footer={<AccountFooter user={user} />}
+        onSearch={workspace ? searchLive : undefined}
         workspace={workspace ? <WorkspaceSelector actions={WORKSPACE_ACTIONS} initialSelected={workspace.selected} /> : undefined}
       >
         {children}

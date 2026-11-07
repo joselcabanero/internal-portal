@@ -122,10 +122,10 @@ export function WorkspaceSelector({ actions, initialSelected = null, canShare = 
         </span>
         <span className={cn(rail, "min-w-0 flex-1 [.ads-workspace-sheet_&]:block")}>
           <span className="flex items-center gap-1.5">
-            <span className="truncate font-mono text-[10px] font-medium uppercase tracking-[.14em] text-muted-foreground">{t.eyebrow}</span>
+            <span className="min-w-0 truncate font-mono text-[10px] font-medium uppercase tracking-[.14em] text-muted-foreground">{t.eyebrow}</span>
             <Badge variant="outline" className="ml-auto shrink-0 tabular-nums">{t.badge}</Badge>
           </span>
-          <span className="block truncate text-label font-medium">{t.summary}</span>
+          <span className="line-clamp-2 block text-label font-medium">{t.summary}</span>
         </span>
         <SlidersHorizontal className={cn(rail, "size-4 shrink-0 text-soft [.ads-workspace-sheet_&]:block")} strokeWidth={1.5} aria-hidden />
       </button>
@@ -158,7 +158,8 @@ function WorkspaceDialog({ actions, applied, catalog, canShare, onCatalog, onClo
   const [draft, setDraft] = useState<string[]>(applied);
   const [query, setQuery] = useState("");
   const [failed, setFailed] = useState(false);
-  const [summary, setSummary] = useState<WorkspaceSummary | null>(null);
+  // The totals and the selection they were asked for: "All markets" asks with no ids and the API names every market.
+  const [summary, setSummary] = useState<{ key: string; value: WorkspaceSummary } | null>(null);
   const [saving, setSaving] = useState(false);
   const [presetName, setPresetName] = useState("");
   const [presetShared, setPresetShared] = useState(false);
@@ -190,12 +191,12 @@ function WorkspaceDialog({ actions, applied, catalog, canShare, onCatalog, onClo
     const ids = key ? key.split(",") : [];
     const timer = setTimeout(() => {
       void actions.summary(ids).then((r) => {
-        if (live) setSummary(r.ok ? r.summary : approximateSummary(ids, catalog.markets));
-      }).catch(() => { if (live) setSummary(approximateSummary(ids, catalog.markets)); });
+        if (live) setSummary({ key, value: r.ok ? r.summary : approximateSummary(ids, catalog.markets) });
+      }).catch(() => { if (live) setSummary({ key, value: approximateSummary(ids, catalog.markets) }); });
     }, 200);
     return () => { live = false; clearTimeout(timer); };
   }, [actions, catalog, key]);
-  const totals = summary && serializeWorkspace(summary.markets) === key ? summary : null;
+  const totals = summary && summary.key === key ? summary.value : null;
 
   const apply = () => {
     applyCookie(selected);

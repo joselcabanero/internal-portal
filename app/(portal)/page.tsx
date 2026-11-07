@@ -21,12 +21,12 @@ async function WorkspaceFigure({ appId }: { appId: string }) {
 
 /** One launcher card: a Panel on the page grid. The title is the link and
  *  stretches over the whole card; a "Soon" app has no link. */
-function AppCard({ app, tag, workspace = false }: { app: PortalApp; tag?: string; workspace?: boolean }) {
+function AppCard({ app, tag, workspace = false, span = 4 }: { app: PortalApp; tag?: string; workspace?: boolean; span?: 4 | 6 }) {
   const soon = app.badge != null;
   const Trail = app.external ? ArrowUpRight : ArrowRight;
   return (
     <Panel
-      span={4}
+      span={span}
       className={
         soon
           ? "flex flex-col gap-3"
@@ -89,6 +89,8 @@ export default async function Home() {
   const copy = editionCopy();
   const categories = editionCategories();
   const workspaceFigures = editionHasWorkspace();
+  // Whole rows: three across when the count allows it, otherwise two (the ecosystem's four apps are 2×2).
+  const platformSpan = platform.length % 3 === 0 || platform.length % 2 === 1 ? 4 : 6;
 
   return (
     <>
@@ -101,7 +103,7 @@ export default async function Home() {
       <div className="flex flex-col gap-10">
       <Section title={copy.platformTitle} blurb={copy.platformBlurb}>
         {platform.map((app) => (
-          <AppCard key={app.id} app={app} workspace={workspaceFigures} />
+          <AppCard key={app.id} app={app} workspace={workspaceFigures} span={platformSpan} />
         ))}
       </Section>
 
