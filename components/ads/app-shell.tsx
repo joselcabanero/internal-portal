@@ -279,8 +279,13 @@ export function portalLayout(portal: PortalLink | undefined, state: PortalState,
 export function buildCommands(nav: NavItem[], switcher: SwitcherItem[], extra: CommandItem[], labels: ShellLabels): CommandItem[] {
   const seen = new Set<string>()
   const out: CommandItem[] = []
-  const add = (c: CommandItem) => { if (seen.has(c.href)) return; seen.add(c.href); out.push(c) }
-  for (const s of switcher) add({ id: `switch-${s.id}`, label: s.label, href: s.href, icon: s.icon, group: s.group ?? labels.apps, hint: s.description, badge: s.badge, external: s.external, reload: s.reload })
+  // local fix — upstream to app-design-system: "/" of the portal (a full load) and "/" of this app (a router link
+  // under its base path) are different places, so the key says which kind of link it is; otherwise the app's home
+  // page (e.g. Jarvis's Review queue) vanished behind "Portal home".
+  const add = (c: CommandItem) => { const k = `${c.external ? 'ext' : c.reload ? 'doc' : 'app'}:${c.href}`; if (seen.has(k)) return; seen.add(k); out.push(c) }
+  // An ungrouped switcher entry (Portal home) joins the apps' own group instead of a group of its own.
+  const appsGroup = switcher.find(s => s.group)?.group ?? labels.apps
+  for (const s of switcher) add({ id: `switch-${s.id}`, label: s.label, href: s.href, icon: s.icon, group: s.group ?? appsGroup, hint: s.description, badge: s.badge, external: s.external, reload: s.reload })
   for (const n of nav) {
     add({ id: n.id, label: n.label, href: n.href, icon: n.icon, group: n.group ?? labels.pages, badge: n.badge, external: n.external, reload: n.reload })
     for (const c of n.children ?? []) add({ id: c.id, label: c.label, href: c.href, icon: c.icon, group: labels.pages, hint: n.label, badge: c.badge, external: c.external, reload: c.reload })
