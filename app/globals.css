@@ -3,5 +3,10 @@
 @import "../styles/ads/ui.css";
 @import "../styles/ads/charts.css";
 
+/* Full canvas: pages use the whole width beside the sidebar (the design system caps them at 1280px by default). */
+:root {
+  --page: none;
+}
+
 /* Everything else comes from the design system (app-design-system): tokens,
    palettes (default Tangerine, switchable in the sidebar), light/dark mode. */

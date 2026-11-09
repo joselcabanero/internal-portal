@@ -2,6 +2,7 @@ import { signIn, auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { EaLogo } from "@/app/components/ea-logo";
 import { Button } from "@/components/ads/kit/button";
+import { editionCopy } from "@/lib/edition";
 
 export default async function LoginPage({
   searchParams,
@@ -20,9 +21,9 @@ export default async function LoginPage({
         <p className="mb-0 mt-10 font-mono text-eyebrow font-medium uppercase text-muted-foreground">
           Eatable Adventures
         </p>
-        <h1 className="m-0 mt-2 text-title font-semibold">Tools Portal</h1>
+        <h1 className="m-0 mt-2 text-title font-semibold">{editionCopy().name}</h1>
         <p className="m-0 mt-1.5 text-[15px] text-muted-foreground">
-          Sign in to access your tools.
+          {editionCopy().signInBlurb}
         </p>
 
         <section className="mt-10 rounded-lg border border-rule bg-panel p-line">

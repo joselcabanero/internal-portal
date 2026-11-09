@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { resolvePlatformApps } from "@/lib/apps";
+import { editionPlatformApps } from "@/lib/edition";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +13,7 @@ export async function GET() {
   if (!session?.user) {
     return NextResponse.json({ error: "unauthenticated" }, { status: 401, headers: NO_STORE });
   }
-  const apps = resolvePlatformApps().map((a) => ({
+  const apps = editionPlatformApps().map((a) => ({
     id: a.id,
     name: a.name,
     description: a.description,

@@ -11,6 +11,8 @@ import { allZones, zoneRewrites } from "./lib/zones";
 const nextConfig: NextConfig = {
   // Local preview runs at 127.0.0.1 (another program owns localhost here).
   allowedDevOrigins: ["127.0.0.1"],
+  // The dev "N" badge covered the sidebar's Collapse button and the phone Filters button (like the apps).
+  devIndicators: false,
   async rewrites() {
     return zoneRewrites(allZones(process.env));
   },

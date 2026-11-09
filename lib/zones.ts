@@ -1,4 +1,5 @@
-import { resolvePlatformApps, type PlatformApp } from "./apps";
+import type { PlatformApp } from "./apps";
+import { editionPlatformApps, portalEdition } from "./edition";
 
 /**
  * Multi-zone rewrites. Each zone app sets `basePath` to its portal path in its
@@ -42,11 +43,13 @@ export function platformZones(apps: PlatformApp[]): Zone[] {
 export function allZones(
   env: Record<string, string | undefined> = process.env,
 ): Zone[] {
-  const taken = new Set(STATIC_ZONES.map((z) => z.path));
-  const platform = platformZones(resolvePlatformApps(env)).filter(
+  // The ecosystem portal proxies its own apps only (no zones to other sites).
+  const fixed = portalEdition(env) === "ecosystem" ? [] : STATIC_ZONES;
+  const taken = new Set(fixed.map((z) => z.path));
+  const platform = platformZones(editionPlatformApps(env)).filter(
     (z) => !taken.has(z.path),
   );
-  return [...STATIC_ZONES, ...platform];
+  return [...fixed, ...platform];
 }
 
 /** Two rules per zone: the zone root and everything under it. */

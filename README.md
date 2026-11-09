@@ -73,6 +73,20 @@ Zones call this (same origin, so the browser sends the portal cookie) to get a
   for a zone's own switcher. Both routes check the session themselves and
   answer JSON 401 rather than redirecting to `/login`.
 
+### Workspace (ecosystem edition)
+
+With `PORTAL_EDITION=ecosystem` the sidebar shows the shared workspace
+selector (pick one market or blend several; stored in the `eatable_workspace`
+cookie every zone reads). The portal's server calls the Platform API itself
+(`lib/platform-server.ts`): it mints the same 5-minute token as
+`/api/platform/token` and sends it to `PLATFORM_API_URL` with
+`Authorization: Bearer`, never to the browser. Presets can be shared with the
+team by admins only (`GET /v1/me` `role === "admin"`). The home cards show
+the workspace's combined totals (`GET /v1/workspace/summary`). Without
+`PLATFORM_API_URL`/`PLATFORM_TOKEN_SECRET`, or when the API is down, the
+selector shows the built-in market names and "could not be loaded", and the
+cards show nothing extra.
+
 ### Environment variables
 
 | Variable | Required | Purpose |
@@ -82,6 +96,8 @@ Zones call this (same origin, so the browser sends the portal cookie) to get a
 | `ZONE_JARVIS_URL`, `ZONE_SCOUT_URL`, `ZONE_NAVIGATOR_URL`, `ZONE_PROGRAMS_URL`, `ZONE_REVENUE_URL` | no | Upstream origin of each platform app; unset = coming soon |
 | `PLATFORM_TOKEN_SECRET` | for the token route | Dedicated secret shared with the Platform API |
 | `PLATFORM_TOKEN_SALT` | no | Salt for that token (= the API's `AUTH_SESSION_COOKIE`) |
+| `PORTAL_EDITION` | no | `ecosystem` for ecosystem.eatableadventures.com (adds the workspace selector); default `tools` |
+| `PLATFORM_API_URL` | ecosystem edition | Platform API origin the portal itself calls (workspace selector, home card totals); unset = those degrade quietly |
 
 ## Local development
 

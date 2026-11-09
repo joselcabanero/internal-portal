@@ -2,18 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { House, LogOut } from "lucide-react";
+import { Building2, GraduationCap, House, LogOut, UserRound } from "lucide-react";
 import type { ReactNode } from "react";
 import { signOutAction } from "@/app/actions";
+import { searchRecords } from "@/app/search-actions";
+import { deleteWorkspacePreset, saveWorkspacePreset, workspaceCatalog, workspaceSummary } from "@/app/workspace-actions";
 import { AppearanceProvider } from "@/components/ads/appearance";
 import {
   AppShell,
   shellLabel,
+  type CommandItem,
   type NavItem,
   type SwitcherItem,
 } from "@/components/ads/app-shell";
 import { portalIcon, type PortalApp } from "@/components/ads/portal";
 import { PORTAL_APP, PORTAL_PALETTE } from "@/components/portal-shell-config";
+import { WorkspaceSelector } from "@/components/workspace/workspace-selector";
+import type { WorkspaceActions } from "@/lib/workspace";
 
 export interface ShellUser {
   name?: string | null;
@@ -21,6 +26,20 @@ export interface ShellUser {
 }
 
 const HOME_ID = "home";
+
+/** ⌘K live results (ecosystem edition): records by name or code, opening in Jarvis 2 (another zone: a full load). */
+async function searchLive(query: string): Promise<CommandItem[]> {
+  const hits = await searchRecords(query);
+  return hits.map((h) => ({ id: h.id, label: h.label, hint: h.hint, href: h.href, group: "Records", reload: true,
+    icon: h.kind === "person" ? UserRound : h.kind === "program" ? GraduationCap : Building2 }));
+}
+
+const WORKSPACE_ACTIONS: WorkspaceActions = { catalog: workspaceCatalog, summary: workspaceSummary, savePreset: saveWorkspacePreset, deletePreset: deleteWorkspacePreset };
+
+/** The workspace selector's starting point, read from the `eatable_workspace` cookie at request time. */
+export interface ShellWorkspace {
+  selected: string[];
+}
 const footerRow =
   "flex min-h-10 w-full items-center gap-3 rounded-md px-2.5 text-muted-foreground";
 
@@ -102,14 +121,22 @@ function AccountFooter({ user }: { user: ShellUser | null }) {
  * The portal shell on the design system's AppShell: sidebar (one line per
  * app), iPad rail, phone tab bar + More sheet, app switcher, ⌘K search and
  * the palette/mode switcher. The login page sits outside it.
+ * `workspace` (ecosystem edition only) adds the workspace selector under the
+ * brand; without it the sidebar has none.
  */
 export function PortalShell({
   apps,
   user,
+  brandName = "Tools Portal",
+  brandSub = "Eatable Adventures",
+  workspace = null,
   children,
 }: {
   apps: PortalApp[];
   user: ShellUser | null;
+  brandName?: string;
+  brandSub?: string;
+  workspace?: ShellWorkspace | null;
   children: ReactNode;
 }) {
   const pathname = usePathname();
@@ -123,12 +150,14 @@ export function PortalShell({
     <AppearanceProvider app={PORTAL_APP} defaultPalette={PORTAL_PALETTE}>
       <AppShell
         app={PORTAL_APP}
-        brand={{ mark: "EA", name: "Tools Portal", sub: "Eatable Adventures" }}
+        brand={{ mark: "EA", name: brandName, sub: brandSub }}
         nav={nav}
         activeId={activeId}
         linkAs={Link}
         switcher={portalSwitcher(apps)}
         footer={<AccountFooter user={user} />}
+        onSearch={workspace ? searchLive : undefined}
+        workspace={workspace ? <WorkspaceSelector actions={WORKSPACE_ACTIONS} initialSelected={workspace.selected} /> : undefined}
       >
         {children}
       </AppShell>

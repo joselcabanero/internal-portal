@@ -97,9 +97,16 @@ export interface AppShellProps {
   /** ⌘K command palette. On by default when there is a switcher or a portal; `false` turns it off,
    *  an array turns it on and adds those commands (actions such as "Invite founder"). */
   search?: boolean | CommandItem[]
+  // local addition: live search — upstream to app-design-system
+  /** Live results for the ⌘K palette (records, codes…), asked for after 2+ characters and a short pause.
+   *  Shown after the matching pages; aborted when the query changes. Errors show no live results. */
+  onSearch?: (query: string, signal: AbortSignal) => Promise<CommandItem[]>
   /** Extra controls at the bottom of the sidebar and the More sheet (account, sign out…).
    *  Wrap text in `shellLabel` so it hides on the rail. */
   footer?: ReactNode
+  // local addition: workspace slot — upstream to app-design-system
+  /** Content under the brand block (e.g. a workspace selector); also at the top of the phone's More sheet. */
+  workspace?: ReactNode
   children: ReactNode
 }
 
@@ -111,7 +118,7 @@ const hideWhenCollapsed = 'hidden lg:inline lg:group-data-[collapsed=true]/shell
 const sectionCls = 'block px-2.5 pb-1.5 font-mono text-[10px] uppercase tracking-[.16em] text-muted-foreground'
 const badgeCls = 'ml-auto rounded-full bg-focal-tint px-1.5 font-mono text-[10px] font-medium text-focal-ink'
 
-export function AppShell({ app, brand, nav, activeId, linkAs: Link = A, portal, switcher, search, footer, children }: AppShellProps) {
+export function AppShell({ app, brand, nav, activeId, linkAs: Link = A, portal, switcher, search, onSearch, footer, workspace, children }: AppShellProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
   const [cmdOpen, setCmdOpen] = useState(false)
@@ -124,7 +131,7 @@ export function AppShell({ app, brand, nav, activeId, linkAs: Link = A, portal, 
   const layout = useMemo(() => portalLayout(portal, portalState, nav, labels), [portal, portalState, nav, labels])
   const switchItems = switcher ?? layout.switcher
   const tree = layout.nav
-  const searchOn = search === undefined ? switchItems.length > 0 || !!portal : search !== false
+  const searchOn = search === undefined ? switchItems.length > 0 || !!portal || !!onSearch : search !== false
   const extra = useMemo(() => (Array.isArray(search) ? search : []), [search])
   const commands = useMemo(() => buildCommands(tree, switchItems, extra, labels), [tree, switchItems, extra, labels])
 
@@ -151,6 +158,8 @@ export function AppShell({ app, brand, nav, activeId, linkAs: Link = A, portal, 
         <div className="pb-3">
           <Brand brand={brand} items={switchItems} Link={Link} labels={labels} />
         </div>
+        {/* local addition: workspace slot — upstream to app-design-system */}
+        {workspace && <div className="pb-3">{workspace}</div>}
         {searchOn && (
           <button type="button" onClick={openSearch} aria-label={labels.search} aria-keyshortcuts="Meta+K Control+K" title={`${labels.search} (${shortcut})`}
             className="mb-2 flex min-h-10 items-center justify-center gap-2.5 rounded-md border border-rule-solid bg-panel px-2.5 text-label text-muted-foreground hover:text-ink lg:justify-start lg:group-data-[collapsed=true]/shell:justify-center">
@@ -216,6 +225,8 @@ export function AppShell({ app, brand, nav, activeId, linkAs: Link = A, portal, 
               className="fixed inset-x-0 bottom-0 z-40 rounded-t-xl border border-b-0 border-rule-solid bg-panel pb-[max(20px,env(safe-area-inset-bottom))] pl-[max(16px,env(safe-area-inset-left))] pr-[max(16px,env(safe-area-inset-right))] pt-5">
               <Dialog.Title className="mb-2 font-mono text-eyebrow uppercase text-muted-foreground">{labels.more}</Dialog.Title>
               <div className="flex max-h-[70dvh] flex-col gap-0.5 overflow-y-auto">
+                {/* local addition: workspace slot — upstream to app-design-system */}
+                {workspace && <div className="ads-workspace-sheet pb-2">{workspace}</div>}
                 <NavTree items={rest} activeId={activeId} Link={Link} onNavigate={() => setMoreOpen(false)} forceLabel />
                 {footer && <div className="flex flex-col gap-0.5 border-t border-rule pt-2 [&_.hidden]:inline">{footer}</div>}
                 <AppearanceButton side="top" />
@@ -225,7 +236,7 @@ export function AppShell({ app, brand, nav, activeId, linkAs: Link = A, portal, 
         </Dialog.Root>
       </nav>
 
-      {searchOn && <CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} items={commands} Link={Link} labels={labels} />}
+      {searchOn && <CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} items={commands} onSearch={onSearch} Link={Link} labels={labels} />}
     </div>
   )
 }
@@ -268,8 +279,13 @@ export function portalLayout(portal: PortalLink | undefined, state: PortalState,
 export function buildCommands(nav: NavItem[], switcher: SwitcherItem[], extra: CommandItem[], labels: ShellLabels): CommandItem[] {
   const seen = new Set<string>()
   const out: CommandItem[] = []
-  const add = (c: CommandItem) => { if (seen.has(c.href)) return; seen.add(c.href); out.push(c) }
-  for (const s of switcher) add({ id: `switch-${s.id}`, label: s.label, href: s.href, icon: s.icon, group: s.group ?? labels.apps, hint: s.description, badge: s.badge, external: s.external, reload: s.reload })
+  // local fix — upstream to app-design-system: "/" of the portal (a full load) and "/" of this app (a router link
+  // under its base path) are different places, so the key says which kind of link it is; otherwise the app's home
+  // page (e.g. Jarvis's Review queue) vanished behind "Portal home".
+  const add = (c: CommandItem) => { const k = `${c.external ? 'ext' : c.reload ? 'doc' : 'app'}:${c.href}`; if (seen.has(k)) return; seen.add(k); out.push(c) }
+  // An ungrouped switcher entry (Portal home) joins the apps' own group instead of a group of its own.
+  const appsGroup = switcher.find(s => s.group)?.group ?? labels.apps
+  for (const s of switcher) add({ id: `switch-${s.id}`, label: s.label, href: s.href, icon: s.icon, group: s.group ?? appsGroup, hint: s.description, badge: s.badge, external: s.external, reload: s.reload })
   for (const n of nav) {
     add({ id: n.id, label: n.label, href: n.href, icon: n.icon, group: n.group ?? labels.pages, badge: n.badge, external: n.external, reload: n.reload })
     for (const c of n.children ?? []) add({ id: c.id, label: c.label, href: c.href, icon: c.icon, group: labels.pages, hint: n.label, badge: c.badge, external: c.external, reload: c.reload })
@@ -416,12 +432,29 @@ function NavLink({ item, active, current, sub, Link: RouterLink, onNavigate, for
   )
 }
 
-function CommandPalette({ open, onOpenChange, items, Link, labels }: { open: boolean; onOpenChange: (o: boolean) => void; items: CommandItem[]; Link: LinkComponent; labels: ShellLabels }) {
+function CommandPalette({ open, onOpenChange, items, onSearch, Link, labels }: { open: boolean; onOpenChange: (o: boolean) => void; items: CommandItem[]; onSearch?: AppShellProps['onSearch']; Link: LinkComponent; labels: ShellLabels }) {
   const [q, setQ] = useState('')
   const [idx, setIdx] = useState(0)
+  const [live, setLive] = useState<{ q: string; items: CommandItem[] } | null>(null)
+  const [searching, setSearching] = useState(false)
   const listRef = useRef<HTMLDivElement>(null)
-  useEffect(() => { if (!open) { setQ(''); setIdx(0) } }, [open])
-  const groups = useMemo(() => grouped(filterCommands(items, q)), [items, q])
+  useEffect(() => { if (!open) { setQ(''); setIdx(0); setLive(null) } }, [open])
+  // Live results: after 2+ characters and a 200ms pause; the previous request is aborted.
+  useEffect(() => {
+    const query = q.trim()
+    if (!onSearch || query.length < 2) { setSearching(false); return }
+    const ctrl = new AbortController()
+    setSearching(true)
+    const t = setTimeout(() => {
+      onSearch(query, ctrl.signal)
+        .then(found => { if (!ctrl.signal.aborted) setLive({ q: query, items: found }) })
+        .catch(() => { if (!ctrl.signal.aborted) setLive({ q: query, items: [] }) })
+        .finally(() => { if (!ctrl.signal.aborted) setSearching(false) })
+    }, 200)
+    return () => { ctrl.abort(); clearTimeout(t) }
+  }, [q, onSearch])
+  const liveItems = useMemo(() => (live && live.q === q.trim() ? live.items : []), [live, q])
+  const groups = useMemo(() => grouped([...filterCommands(items, q), ...liveItems]), [items, q, liveItems])
   const ordered = useMemo(() => groups.flatMap(g => g.items), [groups])
   useEffect(() => setIdx(0), [q])
   useEffect(() => { listRef.current?.querySelector(`[data-cmd-index="${idx}"]`)?.scrollIntoView({ block: 'nearest' }) }, [idx])
@@ -451,7 +484,7 @@ function CommandPalette({ open, onOpenChange, items, Link, labels }: { open: boo
             <kbd className="rounded-sm border border-rule-solid px-1 font-mono text-[10px] leading-[18px] text-muted-foreground">esc</kbd>
           </div>
           <div ref={listRef} id="ads-cmd-list" role="listbox" aria-label={labels.search} className="max-h-[min(480px,60dvh)] overflow-y-auto p-1.5">
-            {ordered.length === 0 && <p className="m-0 px-2.5 py-line text-label text-muted-foreground">{labels.noResults}</p>}
+            {ordered.length === 0 && <p className="m-0 px-2.5 py-line text-label text-muted-foreground" aria-live="polite">{searching ? 'Searching…' : labels.noResults}</p>}
             {groups.map(g => (
               <div key={g.group} role="group" aria-label={g.group}>
                 <div className={cn(sectionCls, 'pt-2.5')}>{g.group}</div>

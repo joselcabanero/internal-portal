@@ -1,3 +1,4 @@
+import { editionCopy } from "@/lib/edition";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AppearanceScript } from "@/components/ads/appearance";
@@ -15,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tools Portal",
-  description: "Internal tools portal for Eatable Adventures",
+  title: editionCopy().name,
+  description: editionCopy().description,
 };
 
 export const viewport: Viewport = {

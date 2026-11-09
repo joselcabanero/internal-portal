@@ -4,6 +4,8 @@
 
 This app uses Eatable's design system **app-design-system** (github.com/Eatable-Adventures/app-design-system), installed from the shadcn registry `@ads` (`components.json`) into `components/ads/` and `styles/ads/`. Update with `npx shadcn add @ads/ads-ui @ads/ads-charts --overwrite`; do not edit those files by hand. The portal home is `<AppShell>` in `components/portal-shell.tsx`; the app list (sidebar, switcher, launcher and `GET /api/portal-apps`) comes from `lib/portal-apps.ts`.
 
+- Workspace: shown **only in the ecosystem edition** (`PORTAL_EDITION=ecosystem`, `editionHasWorkspace` in `lib/edition.ts`); the tools edition has no selector. `components/ads/app-shell.tsx` has one local addition, a `workspace` slot under the brand (and atop the phone's More sheet), marked `// local addition: workspace slot — upstream to app-design-system`; keep it when updating the registry until it is upstream. The selector `components/workspace/workspace-selector.tsx`, the helper `lib/workspace.ts` and `tests/workspace.test.ts` are SHARED: byte-identical in jarvis2-admin, scout, navigator, ontology-studio and the portal; change one, copy to all. The cookie `eatable_workspace` (market ids) scopes every Platform API call (`X-Eatable-Workspace`, added in `lib/platform-client.ts`). The portal calls the API server-side only (`lib/platform-server.ts`, a freshly minted Platform token; needs `PLATFORM_API_URL` + `PLATFORM_TOKEN_SECRET`); the selector's server actions are `app/workspace-actions.ts`, and the home cards show the workspace's totals (`lib/workspace-figures.ts`).
+
 ## Rules for apps
 
 ### Colour
