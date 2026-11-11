@@ -25,7 +25,7 @@ describe("resolvePlatformApps", () => {
     expect(PLATFORM_APPS.map((a) => a.basePath)).toEqual([
       "/jarvis",
       "/scout",
-      "/navigator",
+      "/datalab",
       "/ontology-studio",
       "/programs",
       "/revenue",

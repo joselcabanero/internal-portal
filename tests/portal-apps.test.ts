@@ -18,7 +18,7 @@ describe("buildPortalApps", () => {
   it("lists live platform apps as zones on their portal path", () => {
     expect(byId.jarvis).toMatchObject({ label: "Jarvis 2", href: "/jarvis", zone: true, group: "Platform" });
     expect(byId.scout).toMatchObject({ href: "/scout", zone: true });
-    expect(byId.navigator).toMatchObject({ href: "/navigator", zone: true });
+    expect(byId.navigator).toMatchObject({ href: "/datalab", zone: true, label: "DataLab" });
     expect(byId.jarvis.badge).toBeUndefined();
   });
 

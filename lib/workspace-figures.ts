@@ -6,7 +6,7 @@ import { compactUsd, inWorkspace, type WorkspaceSummary } from "@/lib/workspace"
  *
  *   Jarvis 2        "4,120 organisations in Agriculture & AgTech + Food Production"
  *   Scout           "1,830 startups, 96 corporate investors in …"
- *   Data Navigator  "$12.4B funding across 2,310 rounds in …"
+ *   DataLab         "$12.4B funding across 2,310 rounds in …"
  *
  * `label` is `workspaceLabel(…)`; "" (all markets) reads "in all markets".
  */
