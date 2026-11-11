@@ -52,6 +52,27 @@ export function allZones(
   return [...fixed, ...platform];
 }
 
+export interface Redirect {
+  source: string;
+  destination: string;
+  permanent: boolean;
+}
+
+/** Old zone paths that moved. DataLab was Data Navigator at /navigator. */
+export const MOVED_ZONES: readonly { from: `/${string}`; to: `/${string}` }[] = [
+  { from: "/navigator", to: "/datalab" },
+];
+
+/** Two redirects per moved zone (its root and everything under it). Not permanent while the rename settles. */
+export function legacyRedirects(
+  moved: readonly { from: string; to: string }[] = MOVED_ZONES,
+): Redirect[] {
+  return moved.flatMap(({ from, to }) => [
+    { source: from, destination: to, permanent: false },
+    { source: `${from}/:path*`, destination: `${to}/:path*`, permanent: false },
+  ]);
+}
+
 /** Two rules per zone: the zone root and everything under it. */
 export function zoneRewrites(zones: readonly Zone[]): Rewrite[] {
   return zones.flatMap(({ path, origin }) => [

@@ -28,7 +28,8 @@ the palette switcher (default Tangerine), plus a launcher on the home page
 (`Grid`/`Panel`). `tests/design-lint.test.ts` keeps the design rules green.
 
 - **App registry:** `lib/apps.ts` lists the platform apps: Jarvis 2
-  (`/jarvis`), Scout (`/scout`), Data Navigator (`/navigator`), OI Programs
+  (`/jarvis`), Scout (`/scout`), DataLab (`/datalab`, formerly Data Navigator at
+  `/navigator`, which redirects), OI Programs
   (`/programs`) and Revenue (`/revenue`). Each one is its own repo and deploy
   with `basePath` set to its zone path.
 - **Zones:** `lib/zones.ts` builds the `next.config.ts` rewrites from the

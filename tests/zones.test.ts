@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { STATIC_ZONES, allZones, zoneRewrites } from "@/lib/zones";
+import { STATIC_ZONES, allZones, legacyRedirects, zoneRewrites } from "@/lib/zones";
 
 /** The rewrites production had before the platform registry. */
 const BEFORE = [
@@ -38,5 +38,20 @@ describe("zone rewrites", () => {
     const paths = allZones({ ZONE_JARVIS_URL: "https://j.example.com" }).map((z) => z.path);
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths.slice(0, STATIC_ZONES.length)).toEqual(STATIC_ZONES.map((z) => z.path));
+  });
+});
+
+describe("legacy redirects", () => {
+  it("send the old Data Navigator path to DataLab, root and below, not permanent", () => {
+    expect(legacyRedirects()).toEqual([
+      { source: "/navigator", destination: "/datalab", permanent: false },
+      { source: "/navigator/:path*", destination: "/datalab/:path*", permanent: false },
+    ]);
+  });
+
+  it("never redirect a path the portal still routes as a zone", () => {
+    const env = { ZONE_NAVIGATOR_URL: "https://navigator.example.com" };
+    const zonePaths = new Set(allZones(env).map((z) => z.path as string));
+    for (const r of legacyRedirects()) expect(zonePaths.has(r.source)).toBe(false);
   });
 });

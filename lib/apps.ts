@@ -68,11 +68,13 @@ export const PLATFORM_APPS: readonly PlatformAppDefinition[] = [
   },
   {
     id: "navigator",
-    name: "Data Navigator",
+    // Renamed from "Data Navigator" (was /navigator): the id stays "navigator" because the app, its saved
+    // views and the edition list are keyed by it. next.config.ts redirects the old path (LEGACY_REDIRECTS).
+    name: "DataLab",
     description:
-      "Explore the ecosystem by market, technology and value chain, with market analysis on top.",
+      "Explore the ecosystem by market, technology and value chain, with market analysis and quarterly market reports on top.",
     icon: "compass",
-    basePath: "/navigator",
+    basePath: "/datalab",
     urlEnv: "ZONE_NAVIGATOR_URL",
   },
   {

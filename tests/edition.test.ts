@@ -27,7 +27,7 @@ describe("portal edition", () => {
     expect(editionPlatformApps(env).map((a) => a.id)).toEqual(["jarvis", "scout", "navigator", "ontology-studio"]);
     expect(editionCategories(env)).toEqual([]);
     expect(editionCopy(env).name).toBe("Ecosystem");
-    expect(allZones(env).map((z) => z.path)).toEqual(["/jarvis", "/scout", "/navigator", "/ontology-studio"]);
+    expect(allZones(env).map((z) => z.path)).toEqual(["/jarvis", "/scout", "/datalab", "/ontology-studio"]);
   });
 
   it("an ecosystem app without an upstream URL is listed as coming soon, not routed", () => {

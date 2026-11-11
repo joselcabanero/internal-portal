@@ -7,7 +7,7 @@ import { categories as toolCategories, type PortalCategory } from "./links";
  * - `tools` (default): tools.eatableadventures.com — the platform apps plus the
  *   team's other tools (business models, financial planner, …).
  * - `ecosystem`: ecosystem.eatableadventures.com — replaces old Jarvis there, so it
- *   lists the ecosystem apps only (Jarvis 2, Scout, Data Navigator, Ontology Studio):
+ *   lists the ecosystem apps only (Jarvis 2, Scout, DataLab, Ontology Studio):
  *   no other tools, no revenue app, no fixed zones to other sites.
  *
  * Chosen per deploy with PORTAL_EDITION. Read at build time for the rewrites

@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { allZones, zoneRewrites } from "./lib/zones";
+import { allZones, legacyRedirects, zoneRewrites } from "./lib/zones";
 
 // Apps without their own subdomain are served under a portal path (multi-zone).
 // Each zone app must set `basePath` to its portal path in its own next.config,
@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["127.0.0.1"],
   // The dev "N" badge covered the sidebar's Collapse button and the phone Filters button (like the apps).
   devIndicators: false,
+  // Moved zones (Data Navigator /navigator is now DataLab /datalab): old links keep working.
+  async redirects() {
+    return legacyRedirects();
+  },
   async rewrites() {
     return zoneRewrites(allZones(process.env));
   },
