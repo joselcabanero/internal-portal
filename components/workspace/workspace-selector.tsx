@@ -10,7 +10,8 @@
  */
 
 import {
-  Apple, Building2, Coins, Cog, Cpu, Dna, Factory, Fish, FlaskConical, Globe, HeartPulse, Landmark, Layers, Leaf, Pill,
+  Apple, Building2, Coins, Cog, Cpu, Dna, Factory, Fish, FlaskConical, Globe, GraduationCap, HeartHandshake, HeartPulse, Landmark,
+  Layers, Leaf, Pill, ShoppingBag,
   Recycle, RotateCcw, Search, Server, ServerCog, ShieldCheck, SlidersHorizontal, Sprout, Sun, Tractor, Truck, Utensils,
   UtensilsCrossed, Wallet, Wheat, Wind, X, Zap, type LucideIcon,
 } from "lucide-react";
@@ -34,7 +35,8 @@ const ICONS: Record<string, LucideIcon> = {
   apple: Apple, fish: Fish, "heart-pulse": HeartPulse, "flask-conical": FlaskConical, pill: Pill, dna: Dna,
   landmark: Landmark, wallet: Wallet, coins: Coins, zap: Zap, sun: Sun, wind: Wind, recycle: Recycle, factory: Factory,
   cog: Cog, truck: Truck, "shield-check": ShieldCheck, server: Server, "server-cog": ServerCog, cpu: Cpu,
-  "building-2": Building2, globe: Globe, layers: Layers,
+  "building-2": Building2, globe: Globe, layers: Layers, "shopping-bag": ShoppingBag, "graduation-cap": GraduationCap,
+  "heart-handshake": HeartHandshake,
 };
 
 /** The Lucide icon for a market's icon name ("Sprout", "HeartPulse", "heart-pulse", "Building2"…); Layers when unknown. */
