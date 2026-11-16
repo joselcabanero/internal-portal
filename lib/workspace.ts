@@ -89,6 +89,10 @@ export const KNOWN_MARKETS: { id: string; name: string; icon: string }[] = [
   { id: "energy_climate", name: "Energy, Climate & CleanTech", icon: "Zap" },
   { id: "industrial_manufacturing", name: "Industrial & Manufacturing", icon: "Factory" },
   { id: "enterprise_cyber", name: "Enterprise & Cyber Infrastructure", icon: "ServerCog" },
+  { id: "mobility_logistics", name: "Mobility & Logistics", icon: "Truck" },
+  { id: "consumer_commerce", name: "Consumer & Commerce", icon: "ShoppingBag" },
+  { id: "education_work", name: "Education & Work", icon: "GraduationCap" },
+  { id: "impact_development", name: "Impact & Development", icon: "HeartHandshake" },
 ];
 
 /**
@@ -98,7 +102,7 @@ export const KNOWN_MARKETS: { id: string; name: string; icon: string }[] = [
 export const MARKET_ICON_NAMES = [
   "Sprout", "Wheat", "Leaf", "Tractor", "UtensilsCrossed", "Utensils", "Apple", "Fish", "HeartPulse", "FlaskConical", "Pill",
   "Dna", "Landmark", "Wallet", "Coins", "Zap", "Sun", "Wind", "Recycle", "Factory", "Cog", "Truck", "ShieldCheck",
-  "Server", "ServerCog", "Cpu", "Building2", "Globe", "Layers",
+  "Server", "ServerCog", "Cpu", "Building2", "Globe", "Layers", "ShoppingBag", "GraduationCap", "HeartHandshake",
 ] as const;
 
 /** An icon name in the platform's form (PascalCase): "heart-pulse" → "HeartPulse", "building_2" → "Building2". */
